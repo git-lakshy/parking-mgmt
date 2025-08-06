@@ -33,6 +33,9 @@
     --secondary: 215 28% 15%;
     --secondary-hover: 215 28% 18%;
     --secondary-foreground: 213 31% 91%;
+    
+    /* Shield glow effect */
+    --shield-glow: 200 98% 65%;
 
     /* Muted enterprise tones */
     --muted: 215 28% 12%;
@@ -186,5 +189,9 @@
 
   .glow-danger {
     box-shadow: var(--shadow-danger);
+  }
+
+  .glow-shield {
+    box-shadow: 0 0 15px hsl(var(--shield-glow) / 0.6);
   }
 }

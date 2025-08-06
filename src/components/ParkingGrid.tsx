@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import { ParkingSlot } from '@/types/parking';
 import { Button } from '@/components/ui/button';
-import { Car, Clock, Check, AlertTriangle } from 'lucide-react';
+import { Car, Clock, Check } from 'lucide-react';
 
 interface ParkingGridProps {
   slots: ParkingSlot[];
   onSlotSelect: (slot: ParkingSlot) => void;
   isAdminMode?: boolean;
-  onReportSlot?: (slot: ParkingSlot) => void;
 }
 
-export const ParkingGrid = ({ slots, onSlotSelect, isAdminMode = false, onReportSlot }: ParkingGridProps) => {
+export const ParkingGrid = ({ slots, onSlotSelect, isAdminMode = false }: ParkingGridProps) => {
   const [hoveredSlot, setHoveredSlot] = useState<string | null>(null);
 
   const getSlotIcon = (status: ParkingSlot['status']) => {
@@ -40,7 +39,7 @@ export const ParkingGrid = ({ slots, onSlotSelect, isAdminMode = false, onReport
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 p-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-3 sm:gap-4 p-4 sm:p-6">
       {slots.map((slot) => (
         <div
           key={slot.id}
@@ -81,20 +80,6 @@ export const ParkingGrid = ({ slots, onSlotSelect, isAdminMode = false, onReport
                       {new Date(slot.booking.timestamp).toLocaleString()}
                     </p>
                   </>
-                )}
-                {!isAdminMode && onReportSlot && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onReportSlot(slot);
-                    }}
-                    className="w-full mt-2 text-xs bg-warning/10 border-warning hover:bg-warning hover:text-warning-foreground"
-                  >
-                    <AlertTriangle className="w-3 h-3 mr-1" />
-                    Report Issue
-                  </Button>
                 )}
               </div>
             </div>

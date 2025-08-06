@@ -10,7 +10,7 @@ import { BookingModal } from '@/components/BookingModal';
 import { AdminLogin } from '@/components/AdminLogin';
 import { AdminPanel } from '@/components/AdminPanel';
 import { CancelBookingModal } from '@/components/CancelBookingModal';
-import { ReportModal } from '@/components/ReportModal';
+
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -31,7 +31,7 @@ const Index = () => {
     resetSlots,
     adminLogin,
     adminLogout,
-    submitReport,
+    
     searchSlots,
     searchBookings,
   } = useParkingSystem();
@@ -42,7 +42,7 @@ const Index = () => {
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isBookingsViewOpen, setIsBookingsViewOpen] = useState(false);
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  
   const [selectedBookingForCompletion, setSelectedBookingForCompletion] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
@@ -73,10 +73,6 @@ const Index = () => {
     }
   };
 
-  const handleReportSlot = (slot: ParkingSlot) => {
-    setSelectedSlot(slot);
-    setIsReportModalOpen(true);
-  };
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
@@ -155,7 +151,6 @@ const Index = () => {
         slots={filteredSlots}
         onSlotSelect={handleSlotSelect}
         isAdminMode={false}
-        onReportSlot={handleReportSlot}
       />
 
       {/* Modals */}
@@ -164,7 +159,6 @@ const Index = () => {
         onClose={() => setIsBookingModalOpen(false)}
         slot={selectedSlot}
         onConfirmBooking={bookSlot}
-        onReportSlot={handleReportSlot}
       />
 
       <AdminLogin
@@ -285,20 +279,6 @@ const Index = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Report Modal */}
-      <ReportModal
-        isOpen={isReportModalOpen}
-        onClose={() => setIsReportModalOpen(false)}
-        slot={selectedSlot}
-        onSubmitReport={(slotId, reporterName, message) => {
-          submitReport(slotId, reporterName, message);
-          toast({
-            title: "Report Submitted",
-            description: "Your report has been sent to the admin.",
-            variant: "default",
-          });
-        }}
-      />
     </div>
   );
 };
