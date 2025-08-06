@@ -32,7 +32,7 @@ export const ParkingGrid = ({ slots, onSlotSelect, isAdminMode = false }: Parkin
       case 'occupied':
         return 'destructive';
       case 'reserved':
-        return 'warning';
+        return 'default';
       default:
         return 'secondary';
     }

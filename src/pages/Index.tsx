@@ -22,6 +22,7 @@ const Index = () => {
     adminUser,
     bookSlot,
     cancelBooking,
+    completeBooking,
     addSlot,
     removeSlot,
     resetSlots,
@@ -35,6 +36,7 @@ const Index = () => {
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isBookingsViewOpen, setIsBookingsViewOpen] = useState(false);
+  const [selectedBookingForCompletion, setSelectedBookingForCompletion] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleSlotSelect = (slot: ParkingSlot) => {
@@ -46,10 +48,16 @@ const Index = () => {
     if (slot.status === 'available') {
       setSelectedSlot(slot);
       setIsBookingModalOpen(true);
+    } else if (slot.status === 'reserved') {
+      toast({
+        title: "Slot Reserved",
+        description: `Slot ${slot.number} is reserved by you.`,
+        variant: "default",
+      });
     } else {
       toast({
         title: "Slot Unavailable",
-        description: `Slot ${slot.number} is currently ${slot.status}.`,
+        description: `Slot ${slot.number} is currently occupied.`,
         variant: "destructive",
       });
     }
@@ -68,6 +76,22 @@ const Index = () => {
   };
 
   const activeBookings = bookings.filter(b => b.status === 'active');
+
+  const handleCompleteBooking = (bookingId: string) => {
+    setSelectedBookingForCompletion(bookingId);
+  };
+
+  const confirmCompleteBooking = () => {
+    if (selectedBookingForCompletion) {
+      completeBooking(selectedBookingForCompletion);
+      setSelectedBookingForCompletion(null);
+      toast({
+        title: "Booking Completed",
+        description: "The parking slot is now available.",
+        variant: "default",
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -174,6 +198,15 @@ const Index = () => {
                         Booking ID: {booking.id}
                       </div>
                     </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleCompleteBooking(booking.id)}
+                      className="bg-success/10 border-success hover:bg-success hover:text-success-foreground"
+                    >
+                      <Check className="w-4 h-4 mr-2" />
+                      Complete
+                    </Button>
                   </div>
                 );
               })
@@ -183,6 +216,41 @@ const Index = () => {
                 <p>No active bookings found</p>
               </div>
             )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Complete Booking Confirmation Dialog */}
+      <Dialog open={!!selectedBookingForCompletion} onOpenChange={() => setSelectedBookingForCompletion(null)}>
+        <DialogContent className="enterprise-card border-card-border max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-primary flex items-center gap-2">
+              <Check className="w-5 h-5" />
+              Complete Booking
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <p className="text-foreground-secondary">
+              Are you sure you want to mark this booking as completed? This will make the parking slot available again.
+            </p>
+            
+            <div className="flex gap-3 pt-4">
+              <Button 
+                variant="secondary" 
+                onClick={() => setSelectedBookingForCompletion(null)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button 
+                variant="default"
+                onClick={confirmCompleteBooking}
+                className="flex-1 bg-success hover:bg-success/90"
+              >
+                Yes, Complete
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

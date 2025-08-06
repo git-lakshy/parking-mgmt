@@ -28,7 +28,7 @@ export const useParkingSystem = () => {
     setBookings(prev => [...prev, booking]);
     setSlots(prev => prev.map(slot => 
       slot.id === bookingData.slotId 
-        ? { ...slot, status: 'occupied', booking }
+        ? { ...slot, status: 'reserved', booking }
         : slot
     ));
   }, []);
@@ -39,6 +39,21 @@ export const useParkingSystem = () => {
 
     setBookings(prev => prev.map(b => 
       b.id === bookingId ? { ...b, status: 'cancelled' } : b
+    ));
+    
+    setSlots(prev => prev.map(slot => 
+      slot.id === booking.slotId 
+        ? { ...slot, status: 'available', booking: undefined }
+        : slot
+    ));
+  }, [bookings]);
+
+  const completeBooking = useCallback((bookingId: string) => {
+    const booking = bookings.find(b => b.id === bookingId);
+    if (!booking) return;
+
+    setBookings(prev => prev.map(b => 
+      b.id === bookingId ? { ...b, status: 'completed' } : b
     ));
     
     setSlots(prev => prev.map(slot => 
@@ -95,6 +110,7 @@ export const useParkingSystem = () => {
     adminUser,
     bookSlot,
     cancelBooking,
+    completeBooking,
     addSlot,
     removeSlot,
     resetSlots,

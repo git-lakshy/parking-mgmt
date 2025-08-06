@@ -11,7 +11,7 @@ export interface Booking {
   customerName: string;
   vehicleNumber: string;
   timestamp: Date;
-  status: 'active' | 'cancelled';
+  status: 'active' | 'cancelled' | 'completed';
 }
 
 export interface AdminUser {
