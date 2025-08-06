@@ -14,7 +14,130 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      admin_users: {
+        Row: {
+          created_at: string
+          id: string
+          password_hash: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          password_hash: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          password_hash?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      bookings: {
+        Row: {
+          created_at: string
+          customer_name: string
+          id: string
+          slot_id: string
+          status: string
+          updated_at: string
+          vehicle_number: string
+        }
+        Insert: {
+          created_at?: string
+          customer_name: string
+          id: string
+          slot_id: string
+          status: string
+          updated_at?: string
+          vehicle_number: string
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string
+          id?: string
+          slot_id?: string
+          status?: string
+          updated_at?: string
+          vehicle_number?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "parking_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      parking_slots: {
+        Row: {
+          created_at: string
+          id: string
+          number: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          number: string
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          number?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          reporter_name: string
+          slot_id: string
+          slot_number: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          message: string
+          reporter_name: string
+          slot_id: string
+          slot_number: string
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          reporter_name?: string
+          slot_id?: string
+          slot_number?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "parking_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
