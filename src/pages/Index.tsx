@@ -164,6 +164,7 @@ const Index = () => {
         onClose={() => setIsBookingModalOpen(false)}
         slot={selectedSlot}
         onConfirmBooking={bookSlot}
+        onReportSlot={handleReportSlot}
       />
 
       <AdminLogin

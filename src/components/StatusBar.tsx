@@ -33,28 +33,28 @@ export const StatusBar = ({ slots, bookings }: StatusBarProps) => {
       return {
         label: "100% BOOKED",
         variant: "destructive" as const,
-        icon: <AlertTriangle className="w-4 h-4" />,
+        icon: <AlertTriangle className="w-4 h-4 text-destructive" />,
         className: "bg-destructive text-destructive-foreground animate-pulse"
       };
     } else if (occupancyPercent >= 80) {
       return {
         label: "ALMOST FULL",
         variant: "destructive" as const,
-        icon: <AlertTriangle className="w-4 h-4" />,
+        icon: <AlertTriangle className="w-4 h-4 text-destructive" />,
         className: "bg-destructive text-destructive-foreground"
       };
     } else if (occupancyPercent >= 50) {
       return {
         label: "RUSH HOUR",
         variant: "secondary" as const,
-        icon: <Zap className="w-4 h-4" />,
+        icon: <Zap className="w-4 h-4 text-warning" />,
         className: "bg-warning text-warning-foreground"
       };
     } else {
       return {
         label: "LIVE",
         variant: "default" as const,
-        icon: <Activity className="w-4 h-4" />,
+        icon: <Activity className="w-4 h-4 text-success" />,
         className: "bg-success text-success-foreground"
       };
     }

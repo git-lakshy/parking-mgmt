@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Car, User, Hash } from 'lucide-react';
+import { Car, User, Hash, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface BookingModalProps {
@@ -12,9 +12,10 @@ interface BookingModalProps {
   onClose: () => void;
   slot: ParkingSlot | null;
   onConfirmBooking: (booking: Omit<Booking, 'id' | 'timestamp' | 'status'>) => void;
+  onReportSlot?: (slot: ParkingSlot) => void;
 }
 
-export const BookingModal = ({ isOpen, onClose, slot, onConfirmBooking }: BookingModalProps) => {
+export const BookingModal = ({ isOpen, onClose, slot, onConfirmBooking, onReportSlot }: BookingModalProps) => {
   const [customerName, setCustomerName] = useState('');
   const [vehicleNumber, setVehicleNumber] = useState('');
   const { toast } = useToast();
@@ -115,6 +116,20 @@ export const BookingModal = ({ isOpen, onClose, slot, onConfirmBooking }: Bookin
                 >
                   Cancel
                 </Button>
+                {onReportSlot && slot && (
+                  <Button 
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      onReportSlot(slot);
+                      onClose();
+                    }}
+                    className="flex-1 bg-warning/10 border-warning hover:bg-warning hover:text-warning-foreground"
+                  >
+                    <AlertTriangle className="w-4 h-4 mr-2" />
+                    Report Issue
+                  </Button>
+                )}
                 <Button 
                   type="submit"
                   variant="default"

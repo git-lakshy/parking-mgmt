@@ -20,11 +20,15 @@ import {
   Trash2,
   MessageSquare,
   Settings,
-  TrendingUp
+  TrendingUp,
+  Home,
+  LogOut
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const {
     slots,
     bookings,
@@ -39,6 +43,7 @@ const AdminDashboard = () => {
     emptySlot,
     searchSlots,
     searchBookings,
+    bookSlot,
   } = useParkingSystem();
 
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
@@ -46,7 +51,20 @@ const AdminDashboard = () => {
   const { toast } = useToast();
 
   const handleSlotSelect = (slot: ParkingSlot) => {
-    if (slot.status === 'occupied' || slot.status === 'reserved') {
+    if (slot.status === 'available') {
+      // Admin can book any available slot (demo booking)
+      const demoBooking = {
+        slotId: slot.id,
+        customerName: 'Admin Demo Booking',
+        vehicleNumber: 'ADMIN001',
+      };
+      bookSlot(demoBooking);
+      toast({
+        title: "Demo Booking Created",
+        description: `Slot ${slot.number} has been booked as a demo.`,
+        variant: "default",
+      });
+    } else if (slot.status === 'occupied' || slot.status === 'reserved') {
       // Admin can empty any occupied/reserved slot
       emptySlot(slot.id);
       toast({
@@ -74,6 +92,16 @@ const AdminDashboard = () => {
     toast({
       title: "Report Resolved",
       description: "The report has been marked as resolved.",
+      variant: "default",
+    });
+  };
+
+  const handleLogout = () => {
+    adminLogout();
+    navigate('/');
+    toast({
+      title: "Logged Out",
+      description: "Successfully logged out of admin panel.",
       variant: "default",
     });
   };
@@ -136,6 +164,21 @@ const AdminDashboard = () => {
             >
               <Settings className="w-4 h-4 mr-2" />
               System Settings
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/')}
+              className="bg-secondary/50 hover:bg-secondary"
+            >
+              <Home className="w-4 h-4 mr-2" />
+              Home
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={handleLogout}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
             </Button>
           </div>
         </div>
@@ -224,7 +267,7 @@ const AdminDashboard = () => {
               <CardHeader>
                 <CardTitle className="text-lg text-foreground">Parking Grid Overview</CardTitle>
                 <CardDescription className="text-foreground-secondary">
-                  Click on occupied/reserved slots to empty them. Admin controls are enabled.
+                  Click on available slots to create demo bookings, or occupied/reserved slots to empty them.
                 </CardDescription>
               </CardHeader>
               <CardContent>
