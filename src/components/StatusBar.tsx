@@ -38,7 +38,7 @@ export const StatusBar = ({ slots, bookings }: StatusBarProps) => {
       };
     } else if (occupancyPercent >= 80) {
       return {
-        label: "CRITICAL",
+        label: "ALMOST FULL",
         variant: "destructive" as const,
         icon: <AlertTriangle className="w-4 h-4" />,
         className: "bg-destructive text-destructive-foreground"
