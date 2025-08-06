@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 interface AdminLoginProps {
   isOpen: boolean;
   onClose: () => void;
-  onLogin: (username: string, password: string) => boolean;
+  onLogin: (username: string, password: string) => Promise<boolean>;
 }
 
 export const AdminLogin = ({ isOpen, onClose, onLogin }: AdminLoginProps) => {
@@ -22,23 +22,31 @@ export const AdminLogin = ({ isOpen, onClose, onLogin }: AdminLoginProps) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate authentication delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // Simulate authentication delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-    const success = onLogin(username, password);
-    
-    if (success) {
+      const success = await onLogin(username, password);
+      
+      if (success) {
+        toast({
+          title: "Login Successful",
+          description: "Welcome to the admin panel.",
+        });
+        setUsername('');
+        setPassword('');
+        onClose();
+      } else {
+        toast({
+          title: "Login Failed",
+          description: "Invalid credentials. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       toast({
-        title: "Login Successful",
-        description: "Welcome to the admin panel.",
-      });
-      setUsername('');
-      setPassword('');
-      onClose();
-    } else {
-      toast({
-        title: "Login Failed",
-        description: "Invalid credentials. Please try again.",
+        title: "Login Error",
+        description: "An error occurred during login. Please try again.",
         variant: "destructive",
       });
     }
