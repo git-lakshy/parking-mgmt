@@ -18,3 +18,13 @@ export interface AdminUser {
   username: string;
   isAuthenticated: boolean;
 }
+
+export interface Report {
+  id: string;
+  slotId: string;
+  slotNumber: string;
+  reporterName: string;
+  message: string;
+  timestamp: Date;
+  status: 'pending' | 'resolved';
+}

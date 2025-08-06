@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ParkingSlot } from '@/types/parking';
 import { useParkingSystem } from '@/hooks/useParkingSystem';
 import { Header } from '@/components/Header';
@@ -9,6 +10,7 @@ import { BookingModal } from '@/components/BookingModal';
 import { AdminLogin } from '@/components/AdminLogin';
 import { AdminPanel } from '@/components/AdminPanel';
 import { CancelBookingModal } from '@/components/CancelBookingModal';
+import { ReportModal } from '@/components/ReportModal';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +18,7 @@ import { Car, Clock, Check, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
+  const navigate = useNavigate();
   const {
     slots,
     bookings,
@@ -28,6 +31,9 @@ const Index = () => {
     resetSlots,
     adminLogin,
     adminLogout,
+    submitReport,
+    searchSlots,
+    searchBookings,
   } = useParkingSystem();
 
   const [selectedSlot, setSelectedSlot] = useState<ParkingSlot | null>(null);
@@ -36,15 +42,19 @@ const Index = () => {
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isBookingsViewOpen, setIsBookingsViewOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedBookingForCompletion, setSelectedBookingForCompletion] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const { toast } = useToast();
 
-  const handleSlotSelect = (slot: ParkingSlot) => {
+  // Redirect admin to dashboard after login
+  useEffect(() => {
     if (adminUser?.isAuthenticated) {
-      // Admin mode - show slot details or manage
-      return;
+      navigate('/admin');
     }
+  }, [adminUser, navigate]);
 
+  const handleSlotSelect = (slot: ParkingSlot) => {
     if (slot.status === 'available') {
       setSelectedSlot(slot);
       setIsBookingModalOpen(true);
@@ -63,12 +73,25 @@ const Index = () => {
     }
   };
 
+  const handleReportSlot = (slot: ParkingSlot) => {
+    setSelectedSlot(slot);
+    setIsReportModalOpen(true);
+  };
+
   const handleSearch = (term: string) => {
-    // Implement search functionality
-    console.log('Searching for:', term);
+    setSearchTerm(term);
+    if (term.trim()) {
+      toast({
+        title: "Search Results",
+        description: `Searching for: "${term}"`,
+        variant: "default",
+      });
+    }
   };
 
   const handleRefresh = () => {
+    // Reset search and refresh data
+    setSearchTerm('');
     toast({
       title: "System Refreshed",
       description: "Parking data has been updated.",
@@ -76,6 +99,10 @@ const Index = () => {
   };
 
   const activeBookings = bookings.filter(b => b.status === 'active');
+  
+  // Filter data based on search
+  const filteredSlots = searchTerm ? searchSlots(searchTerm) : slots;
+  const filteredBookings = searchTerm ? searchBookings(searchTerm) : activeBookings;
 
   const handleCompleteBooking = (bookingId: string) => {
     setSelectedBookingForCompletion(bookingId);
@@ -125,9 +152,10 @@ const Index = () => {
       />
 
       <ParkingGrid
-        slots={slots}
+        slots={filteredSlots}
         onSlotSelect={handleSlotSelect}
-        isAdminMode={adminUser?.isAuthenticated}
+        isAdminMode={false}
+        onReportSlot={handleReportSlot}
       />
 
       {/* Modals */}
@@ -168,13 +196,14 @@ const Index = () => {
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-primary flex items-center gap-2">
               <FileText className="w-5 h-5" />
-              Active Bookings ({activeBookings.length})
+              Active Bookings ({filteredBookings.length})
+              {searchTerm && <Badge variant="secondary">Filtered</Badge>}
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-3">
-            {activeBookings.length > 0 ? (
-              activeBookings.map((booking) => {
+            {filteredBookings.length > 0 ? (
+              filteredBookings.map((booking) => {
                 const slot = slots.find(s => s.id === booking.slotId);
                 return (
                   <div key={booking.id} className="enterprise-card p-4 flex items-center justify-between">
@@ -254,6 +283,21 @@ const Index = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Report Modal */}
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        slot={selectedSlot}
+        onSubmitReport={(slotId, reporterName, message) => {
+          submitReport(slotId, reporterName, message);
+          toast({
+            title: "Report Submitted",
+            description: "Your report has been sent to the admin.",
+            variant: "default",
+          });
+        }}
+      />
     </div>
   );
 };

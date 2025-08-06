@@ -5,7 +5,9 @@ import {
   Clock, 
   Check, 
   Users,
-  Activity
+  Activity,
+  AlertTriangle,
+  Zap
 } from 'lucide-react';
 
 interface StatusBarProps {
@@ -23,16 +25,52 @@ export const StatusBar = ({ slots, bookings }: StatusBarProps) => {
   };
 
   const occupancyRate = stats.total > 0 ? ((stats.occupied + stats.reserved) / stats.total * 100).toFixed(1) : '0';
+  const occupancyPercent = parseFloat(occupancyRate);
+
+  // Dynamic status based on occupancy
+  const getSystemStatus = () => {
+    if (occupancyPercent >= 100) {
+      return {
+        label: "100% BOOKED",
+        variant: "destructive" as const,
+        icon: <AlertTriangle className="w-4 h-4" />,
+        className: "bg-destructive text-destructive-foreground animate-pulse"
+      };
+    } else if (occupancyPercent >= 80) {
+      return {
+        label: "CRITICAL",
+        variant: "destructive" as const,
+        icon: <AlertTriangle className="w-4 h-4" />,
+        className: "bg-destructive text-destructive-foreground"
+      };
+    } else if (occupancyPercent >= 50) {
+      return {
+        label: "RUSH HOUR",
+        variant: "secondary" as const,
+        icon: <Zap className="w-4 h-4" />,
+        className: "bg-warning text-warning-foreground"
+      };
+    } else {
+      return {
+        label: "LIVE",
+        variant: "default" as const,
+        icon: <Activity className="w-4 h-4" />,
+        className: "bg-success text-success-foreground"
+      };
+    }
+  };
+
+  const systemStatus = getSystemStatus();
 
   return (
     <div className="enterprise-card p-4 m-6 mb-0">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-primary" />
+            {systemStatus.icon}
             <span className="text-sm font-medium">System Status</span>
-            <Badge variant="default" className="bg-success text-success-foreground">
-              Online
+            <Badge variant={systemStatus.variant} className={systemStatus.className}>
+              {systemStatus.label}
             </Badge>
           </div>
           

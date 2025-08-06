@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { ParkingSlot } from '@/types/parking';
 import { Button } from '@/components/ui/button';
-import { Car, Clock, Check } from 'lucide-react';
+import { Car, Clock, Check, AlertTriangle } from 'lucide-react';
 
 interface ParkingGridProps {
   slots: ParkingSlot[];
   onSlotSelect: (slot: ParkingSlot) => void;
   isAdminMode?: boolean;
+  onReportSlot?: (slot: ParkingSlot) => void;
 }
 
-export const ParkingGrid = ({ slots, onSlotSelect, isAdminMode = false }: ParkingGridProps) => {
+export const ParkingGrid = ({ slots, onSlotSelect, isAdminMode = false, onReportSlot }: ParkingGridProps) => {
   const [hoveredSlot, setHoveredSlot] = useState<string | null>(null);
 
   const getSlotIcon = (status: ParkingSlot['status']) => {
@@ -69,14 +70,32 @@ export const ParkingGrid = ({ slots, onSlotSelect, isAdminMode = false }: Parkin
             <span className="text-xs font-medium">{slot.number}</span>
           </Button>
 
-          {hoveredSlot === slot.id && slot.booking && (
+          {hoveredSlot === slot.id && (
             <div className="absolute z-50 bottom-full left-1/2 transform -translate-x-1/2 mb-2 p-3 enterprise-card min-w-[200px]">
-              <div className="text-xs">
-                <p className="font-medium text-primary">{slot.booking.customerName}</p>
-                <p className="text-foreground-secondary">{slot.booking.vehicleNumber}</p>
-                <p className="text-muted-foreground">
-                  {new Date(slot.booking.timestamp).toLocaleString()}
-                </p>
+              <div className="text-xs space-y-2">
+                {slot.booking && (
+                  <>
+                    <p className="font-medium text-primary">{slot.booking.customerName}</p>
+                    <p className="text-foreground-secondary">{slot.booking.vehicleNumber}</p>
+                    <p className="text-muted-foreground">
+                      {new Date(slot.booking.timestamp).toLocaleString()}
+                    </p>
+                  </>
+                )}
+                {!isAdminMode && onReportSlot && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onReportSlot(slot);
+                    }}
+                    className="w-full mt-2 text-xs bg-warning/10 border-warning hover:bg-warning hover:text-warning-foreground"
+                  >
+                    <AlertTriangle className="w-3 h-3 mr-1" />
+                    Report Issue
+                  </Button>
+                )}
               </div>
             </div>
           )}
