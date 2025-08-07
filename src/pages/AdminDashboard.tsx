@@ -163,7 +163,7 @@ const AdminDashboard = () => {
               className="glow-primary"
             >
               <Settings className="w-4 h-4 mr-2" />
-              System Settings
+              Manage System
             </Button>
             <Button 
               variant="destructive" 
