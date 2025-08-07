@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { ParkingSlot, Booking } from '@/types/parking';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Car, User, Hash } from 'lucide-react';
+import { Car, User, Hash, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface BookingModalProps {
@@ -12,9 +12,10 @@ interface BookingModalProps {
   onClose: () => void;
   slot: ParkingSlot | null;
   onConfirmBooking: (booking: Omit<Booking, 'id' | 'timestamp' | 'status'>) => void;
+  onReportIssue: (slot: ParkingSlot) => void;
 }
 
-export const BookingModal = ({ isOpen, onClose, slot, onConfirmBooking }: BookingModalProps) => {
+export const BookingModal = ({ isOpen, onClose, slot, onConfirmBooking, onReportIssue }: BookingModalProps) => {
   const [customerName, setCustomerName] = useState('');
   const [vehicleNumber, setVehicleNumber] = useState('');
   const { toast } = useToast();
@@ -58,6 +59,9 @@ export const BookingModal = ({ isOpen, onClose, slot, onConfirmBooking }: Bookin
             <Car className="w-5 h-5" />
             Reserve Parking Slot
           </DialogTitle>
+          <DialogDescription>
+            Reserve a parking slot by providing your details below.
+          </DialogDescription>
         </DialogHeader>
 
         {slot && (
@@ -109,19 +113,30 @@ export const BookingModal = ({ isOpen, onClose, slot, onConfirmBooking }: Bookin
               <div className="flex gap-3 pt-4">
                 <Button 
                   type="button" 
-                  variant="secondary" 
-                  onClick={onClose}
-                  className="flex-1"
+                  variant="outline" 
+                  onClick={() => slot && onReportIssue(slot)}
+                  className="flex-shrink-0 border-warning hover:bg-warning/10"
                 >
-                  Cancel
+                  <AlertTriangle className="w-4 h-4 mr-2" />
+                  Report Issue
                 </Button>
-                <Button 
-                  type="submit"
-                  variant="default"
-                  className="flex-1 glow-primary"
-                >
-                  Confirm Booking
-                </Button>
+                <div className="flex gap-2 flex-1">
+                  <Button 
+                    type="button" 
+                    variant="secondary" 
+                    onClick={onClose}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit"
+                    variant="default"
+                    className="flex-1 glow-primary"
+                  >
+                    Confirm Booking
+                  </Button>
+                </div>
               </div>
             </form>
           </div>

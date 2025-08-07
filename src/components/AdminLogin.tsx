@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -59,6 +59,9 @@ export const AdminLogin = ({
             <Shield className="w-5 h-5" />
             Admin Authentication
           </DialogTitle>
+          <DialogDescription>
+            Please enter your admin credentials to access the control panel.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">

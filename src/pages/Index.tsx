@@ -10,9 +10,10 @@ import { BookingModal } from '@/components/BookingModal';
 import { AdminLogin } from '@/components/AdminLogin';
 import { AdminPanel } from '@/components/AdminPanel';
 import { CancelBookingModal } from '@/components/CancelBookingModal';
+import { ReportModal } from '@/components/ReportModal';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Car, Clock, Check, FileText } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -31,7 +32,7 @@ const Index = () => {
     resetSlots,
     adminLogin,
     adminLogout,
-    
+    submitReport,
     searchSlots,
     searchBookings,
   } = useParkingSystem();
@@ -42,6 +43,7 @@ const Index = () => {
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isBookingsViewOpen, setIsBookingsViewOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   
   const [selectedBookingForCompletion, setSelectedBookingForCompletion] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -116,6 +118,31 @@ const Index = () => {
     }
   };
 
+  const handleReportIssue = (slot: ParkingSlot) => {
+    setSelectedSlot(slot);
+    setIsBookingModalOpen(false);
+    setIsReportModalOpen(true);
+  };
+
+  const handleSubmitReport = async (slotId: string, reporterName: string, message: string) => {
+    try {
+      await submitReport(slotId, reporterName, message);
+      toast({
+        title: "Report Submitted",
+        description: "Your report has been submitted successfully.",
+        variant: "default",
+      });
+      setIsReportModalOpen(false);
+      setSelectedSlot(null);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to submit report. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Header
@@ -159,6 +186,14 @@ const Index = () => {
         onClose={() => setIsBookingModalOpen(false)}
         slot={selectedSlot}
         onConfirmBooking={bookSlot}
+        onReportIssue={handleReportIssue}
+      />
+
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        slot={selectedSlot}
+        onSubmitReport={handleSubmitReport}
       />
 
       <AdminLogin
@@ -194,6 +229,9 @@ const Index = () => {
               Active Bookings ({filteredBookings.length})
               {searchTerm && <Badge variant="secondary">Filtered</Badge>}
             </DialogTitle>
+            <DialogDescription>
+              View and manage all active parking bookings.
+            </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-3">
@@ -252,6 +290,9 @@ const Index = () => {
               <Check className="w-5 h-5" />
               Complete Booking
             </DialogTitle>
+            <DialogDescription>
+              Mark this booking as completed and free up the parking slot.
+            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">

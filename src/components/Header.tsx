@@ -67,8 +67,8 @@ Parking Management</p>
                   <LogOut className="w-4 h-4 sm:mr-2" />
                   <span className="hidden sm:inline">Logout</span>
                 </Button>
-              </div> : <Button size="sm" variant="outline" onClick={onAdminLogin} className="glow-shield border-primary/30 hover:bg-primary/10 transition-all duration-300">
-                <Shield className="w-4 h-4 mr-2 text-primary animate-pulse drop-shadow-lg" />
+              </div> : <Button size="sm" variant={adminUser?.isAuthenticated ? "default" : "outline"} onClick={onAdminLogin} className={adminUser?.isAuthenticated ? "bg-success hover:bg-success/90 glow-success" : "glow-shield border-primary/30 hover:bg-primary/10 transition-all duration-300"}>
+                <Shield className={`w-4 h-4 mr-2 ${adminUser?.isAuthenticated ? 'text-success-foreground' : 'text-primary animate-pulse drop-shadow-lg'}`} />
                 Admin
               </Button>}
           </div>

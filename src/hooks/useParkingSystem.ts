@@ -5,7 +5,11 @@ import { ParkingSlot, Booking, AdminUser, Report } from '@/types/parking';
 export const useParkingSystem = () => {
   const [slots, setSlots] = useState<ParkingSlot[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(() => {
+    // Check localStorage for saved admin session
+    const savedAdmin = localStorage.getItem('admin_session');
+    return savedAdmin ? JSON.parse(savedAdmin) : null;
+  });
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -248,10 +252,13 @@ export const useParkingSystem = () => {
     try {
       // Simple demo authentication - in production, use proper password hashing
       if (username === 'admin' && password === 'admin123') {
-        setAdminUser({
+        const adminData = {
           username: 'admin',
           isAuthenticated: true,
-        });
+        };
+        setAdminUser(adminData);
+        // Save to localStorage for persistence
+        localStorage.setItem('admin_session', JSON.stringify(adminData));
         return true;
       }
       return false;
@@ -263,6 +270,8 @@ export const useParkingSystem = () => {
 
   const adminLogout = useCallback(() => {
     setAdminUser(null);
+    // Remove from localStorage
+    localStorage.removeItem('admin_session');
   }, []);
 
   const submitReport = useCallback(async (slotId: string, reporterName: string, message: string) => {

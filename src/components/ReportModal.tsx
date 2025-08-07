@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { ParkingSlot } from '@/types/parking';
 import { AlertTriangle } from 'lucide-react';
@@ -52,6 +52,9 @@ export const ReportModal = ({ isOpen, onClose, slot, onSubmitReport }: ReportMod
             <AlertTriangle className="w-5 h-5" />
             Report Parking Spot
           </DialogTitle>
+          <DialogDescription>
+            Report an issue with this parking spot for administrator review.
+          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
