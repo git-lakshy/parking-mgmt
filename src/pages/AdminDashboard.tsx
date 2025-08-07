@@ -166,14 +166,6 @@ const AdminDashboard = () => {
               System Settings
             </Button>
             <Button 
-              variant="outline" 
-              onClick={() => navigate('/')}
-              className="bg-secondary/50 hover:bg-secondary"
-            >
-              <Home className="w-4 h-4 mr-2" />
-              Home
-            </Button>
-            <Button 
               variant="destructive" 
               onClick={handleLogout}
             >

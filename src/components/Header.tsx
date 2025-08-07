@@ -57,7 +57,7 @@ Parking Management</p>
                 <div className="flex items-center gap-2">
                   <Shield className="w-4 h-4 text-primary glow-shield" />
                   <span className="text-sm font-medium hidden sm:inline">{adminUser.username}</span>
-                  <Badge variant="secondary">Admin</Badge>
+                  <div className="w-2 h-2 bg-success rounded-full animate-pulse"></div>
                 </div>
                 <Button size="sm" variant="default" onClick={onOpenAdminPanel} className="glow-primary">
                   <Settings className="w-4 h-4 sm:mr-2" />
